@@ -7,11 +7,13 @@ public class InteractionManager : MonoBehaviour
 {
     public float scaleFactor = 1.2f; 
     private Vector3 originalScale;
+    private Collider2D collider2d;
     public string sceneToLoad; 
     // Start is called before the first frame update
     void Start()
     {
         originalScale = transform.localScale;
+        collider2d = GetComponent<Collider2D>();
     }
 
     void Update()
