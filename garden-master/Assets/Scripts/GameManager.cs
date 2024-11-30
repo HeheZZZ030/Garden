@@ -26,10 +26,10 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            LoadScene("Real");
-        }
+        //if (Input.GetKeyDown(KeyCode.Alpha5))
+        //{
+        //    LoadScene("Real");
+        //}
     }
 
     public void LoadScene(string sceneName)

@@ -18,5 +18,9 @@ public class AchievementManager : MonoBehaviour
         {
             AchievementLevel1.SetActive(true);
         }
+        else
+        {
+            AchievementLevel1.SetActive(false);
+        }
     }
 }
