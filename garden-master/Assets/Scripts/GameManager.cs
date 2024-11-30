@@ -8,14 +8,14 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get { return _instance; } }
     private static GameManager _instance;
 
-    public GameObject AchievementLevel1;
-
+    public bool isLevel1Achieved;
 
     private void Awake()
     {
         if(_instance == null)
             _instance = this;
         DontDestroyOnLoad(this);
+        isLevel1Achieved = false;
     }
     // Start is called before the first frame update
     void Start()
@@ -35,5 +35,10 @@ public class GameManager : MonoBehaviour
     public void LoadScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
+    }
+
+    public void GetLevel1Down()
+    {
+        isLevel1Achieved = true;
     }
 }

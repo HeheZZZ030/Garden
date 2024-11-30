@@ -1,7 +1,16 @@
+using System.Collections;
 using UnityEngine;
 
 public class SpriteTransition : MonoBehaviour
 {
+    private enum LevelState
+    {
+        Ready,
+        Playing,
+        Success,
+        End,
+    }
+
     public Material ringMaterial; // 使用的过渡材质
     public float transitionSpeed = 1f; // 切换速度
     public Texture correctTexture; // Correct 状态下的纹理
@@ -34,98 +43,139 @@ public class SpriteTransition : MonoBehaviour
     public int maxScore = 30;
     private float easeValue = 0f; // 最终的缓动值
     private float mappedValue = 0f; // 映射的值（0-1）
+
+    private LevelState levelState;
     void Start()
     {
+        levelState = LevelState.Ready;
+
         UpdateMaterialTexture(); // 初始更新材质的纹理
+
+        StartCoroutine(WaitForBegin());
     }
 
     void Update()
     {
-        // cal next state
-        TransitionState nextState;
-        if(breathingScale.breathingState == BreathingState.Inhale)
+        if(levelState == LevelState.Ready)
         {
-            if (!Input.GetKey(KeyCode.Space))
+
+        }
+
+        if(levelState == LevelState.Playing)
+        {
+            // cal next state
+            TransitionState nextState;
+            if (breathingScale.breathingState == BreathingState.Inhale)
             {
-                nextState = TransitionState.Correct;
+                if (!Input.GetKey(KeyCode.Space))
+                {
+                    nextState = TransitionState.Correct;
+                }
+                else
+                {
+                    nextState = TransitionState.Wrong;
+                }
+            }
+            else if (breathingScale.breathingState == BreathingState.Exhale)
+            {
+                if (Input.GetKey(KeyCode.Space))
+                {
+                    nextState = TransitionState.Correct;
+                }
+                else
+                {
+                    nextState = TransitionState.Wrong;
+                }
             }
             else
             {
-                nextState = TransitionState.Wrong;
+                nextState = curState;
             }
-        }
-        else if(breathingScale.breathingState == BreathingState.Exhale)
-        {
-            if (Input.GetKey(KeyCode.Space))
+
+            // state transfer timmer reset
+            if (nextState == TransitionState.Correct && curState == TransitionState.Wrong)
             {
-                nextState = TransitionState.Correct;
+                wrongTime = 0f;
             }
-            else
+            if (nextState == TransitionState.Wrong && curState == TransitionState.Correct)
             {
-                nextState = TransitionState.Wrong;
+                correctTime = 0f;
+            }
+
+            // ring state 
+            if (nextState != curState)
+            {
+                curState = nextState;
+                ToggleState();
+            }
+
+            // 控制过渡效果的进行
+            HandleTransition();
+
+            if (curState == TransitionState.Correct)
+            {
+                correctTime += Time.deltaTime; // 增加 Correct 状态计时
+            }
+            else if (curState == TransitionState.Wrong)
+            {
+                wrongTime += Time.deltaTime; // 增加 Wrong 状态计时
+            }
+
+            // 如果 Correct 状态保持超过阈值，开始加分
+            if (curState == TransitionState.Correct && correctTime >= correctThreshold)
+            {
+                score += 1; // 加分
+                correctTime = 0f; // 重置计时器
+            }
+
+            // 如果 Wrong 状态保持超过阈值，开始减分
+            if (curState == TransitionState.Wrong && wrongTime >= wrongThreshold)
+            {
+                score -= 2; // 减分
+                wrongTime = 0f; // 重置计时器
+            }
+
+            score = Mathf.Clamp(score, 0, maxScore);
+
+            // 将整数值映射到0到1的范围
+            mappedValue = Mathf.InverseLerp(0f, maxScore, score);
+
+            // 使用 Mathf.SmoothStep 进行 Ease In/Out 缓动
+            easeValue = Mathf.SmoothStep(0f, 1f, mappedValue);
+
+            dissolveAmount = easeValue;
+
+            bgMaterial.SetFloat("_DissolveAmount", dissolveAmount);
+
+            if(dissolveAmount >= 0.95)
+            {
+                levelState = LevelState.Success;
+                StartCoroutine(WaitForEnd());
             }
         }
-        else
+        
+        if(levelState == LevelState.Success)
         {
-            nextState = curState;
+            GameManager.Instance.GetLevel1Down();
+            bgMaterial.SetFloat("_DissolveAmount", 1);
         }
 
-        // state transfer timmer reset
-        if(nextState == TransitionState.Correct && curState == TransitionState.Wrong)
+        if (levelState == LevelState.End)
         {
-            wrongTime = 0f;
+
         }
-        if(nextState == TransitionState.Wrong && curState == TransitionState.Correct)
-        {
-            correctTime = 0f;
-        }
-
-        // ring state 
-        if(nextState != curState)
-        {
-            curState = nextState;
-            ToggleState();
-        }
-
-        // 控制过渡效果的进行
-        HandleTransition();
-
-        if(curState == TransitionState.Correct)
-        {
-            correctTime += Time.deltaTime; // 增加 Correct 状态计时
-        }
-        else if(curState == TransitionState.Wrong)
-        {
-            wrongTime += Time.deltaTime; // 增加 Wrong 状态计时
-        }
-
-        // 如果 Correct 状态保持超过阈值，开始加分
-        if (curState == TransitionState.Correct && correctTime >= correctThreshold)
-        {
-            score += 1; // 加分
-            correctTime = 0f; // 重置计时器
-        }
-
-        // 如果 Wrong 状态保持超过阈值，开始减分
-        if (curState == TransitionState.Wrong && wrongTime >= wrongThreshold)
-        {
-            score -= 2; // 减分
-            wrongTime = 0f; // 重置计时器
-        }
-
-        score = Mathf.Clamp(score, 0, maxScore);
-
-        // 将整数值映射到0到1的范围
-        mappedValue = Mathf.InverseLerp(0f, maxScore, score);
-
-        // 使用 Mathf.SmoothStep 进行 Ease In/Out 缓动
-        easeValue = Mathf.SmoothStep(0f, 1f, mappedValue);
-
-        dissolveAmount = easeValue;
-
-        bgMaterial.SetFloat("_DissolveAmount", dissolveAmount);
     }
-
+    IEnumerator WaitForBegin()
+    {
+        yield return new WaitForSeconds(5.0f);
+        levelState = LevelState.Playing;
+    }
+    IEnumerator WaitForEnd()
+    {
+        yield return new WaitForSeconds(3.0f);
+        levelState = LevelState.End;
+        GameManager.Instance.LoadScene("REAL");
+    }
     // 切换状态
     private void ToggleState()
     {
@@ -164,5 +214,10 @@ public class SpriteTransition : MonoBehaviour
             ringMaterial.SetTexture("_MainTex", wrongTexture);
             ringMaterial.SetTexture("_SecondTex", correctTexture);
         }
+    }
+
+    private void OnDestroy()
+    {
+        bgMaterial.SetFloat("_DissolveAmount", 0);
     }
 }

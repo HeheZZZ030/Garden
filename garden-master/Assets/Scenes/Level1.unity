@@ -333,7 +333,7 @@ MonoBehaviour:
   correctThreshold: 2
   wrongThreshold: 1.5
   score: 0
-  maxScore: 45
+  maxScore: 15
 --- !u!1 &381436384
 GameObject:
   m_ObjectHideFlags: 0
