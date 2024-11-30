@@ -29,6 +29,11 @@ public class SpriteTransition : MonoBehaviour
 
     private float correctTime = 0f; // 正确状态计时器
     private float wrongTime = 0f;   // 错误状态计时器
+
+
+    public int maxScore = 30;
+    private float easeValue = 0f; // 最终的缓动值
+    private float mappedValue = 0f; // 映射的值（0-1）
     void Start()
     {
         UpdateMaterialTexture(); // 初始更新材质的纹理
@@ -104,9 +109,19 @@ public class SpriteTransition : MonoBehaviour
         // 如果 Wrong 状态保持超过阈值，开始减分
         if (curState == TransitionState.Wrong && wrongTime >= wrongThreshold)
         {
-            score -= 1; // 减分
+            score -= 2; // 减分
             wrongTime = 0f; // 重置计时器
         }
+
+        score = Mathf.Clamp(score, 0, maxScore);
+
+        // 将整数值映射到0到1的范围
+        mappedValue = Mathf.InverseLerp(0f, maxScore, score);
+
+        // 使用 Mathf.SmoothStep 进行 Ease In/Out 缓动
+        easeValue = Mathf.SmoothStep(0f, 1f, mappedValue);
+
+        dissolveAmount = easeValue;
 
         bgMaterial.SetFloat("_DissolveAmount", dissolveAmount);
     }

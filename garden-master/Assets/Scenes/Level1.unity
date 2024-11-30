@@ -330,6 +330,10 @@ MonoBehaviour:
   curState: 0
   bgMaterial: {fileID: 2100000, guid: e784cb4051e0e6f40aaefb4934303980, type: 2}
   dissolveAmount: 0
+  correctThreshold: 2
+  wrongThreshold: 1.5
+  score: 0
+  maxScore: 45
 --- !u!1 &381436384
 GameObject:
   m_ObjectHideFlags: 0
