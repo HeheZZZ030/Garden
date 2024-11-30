@@ -1,21 +1,20 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI1 : MonoBehaviour
+public class UIFade : MonoBehaviour
 {
-    public Image uiImage;
-    public float delayBeforeShowing; 
+    public Text element;
+    public float delayBeforeShowing;
     public float fadeDuration;
     public float displayDuration;
 
     void Start()
     {
-        Color color = uiImage.color;
+        Color color = element.color;
         color.a = 0f;
-        uiImage.color = color;
+        element.color = color;
         StartCoroutine(FadeInAndOut());
     }
 
@@ -30,30 +29,30 @@ public class UI1 : MonoBehaviour
     IEnumerator FadeIn()
     {
         float elapsedTime = 0f;
-        Color color = uiImage.color;
+        Color color = element.color;
         while (elapsedTime < fadeDuration)
         {
             elapsedTime += Time.deltaTime;
             color.a = Mathf.Clamp01(elapsedTime / fadeDuration);
-            uiImage.color = color;
+            element.color = color;
             yield return null;
         }
         color.a = 1f;
-        uiImage.color = color;
+        element.color = color;
     }
 
     IEnumerator FadeOut()
     {
         float elapsedTime = 0f;
-        Color color = uiImage.color;
+        Color color = element.color;
         while (elapsedTime < fadeDuration)
         {
             elapsedTime += Time.deltaTime;
             color.a = Mathf.Clamp01(1f - (elapsedTime / fadeDuration));
-            uiImage.color = color;
+            element.color = color;
             yield return null;
         }
         color.a = 0f;
-        uiImage.color = color;
+        element.color = color;
     }
 }

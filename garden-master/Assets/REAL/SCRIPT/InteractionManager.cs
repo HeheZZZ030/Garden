@@ -25,7 +25,9 @@ public class InteractionManager : MonoBehaviour
             Collider2D collider = GetComponent<Collider2D>();
             if (collider != null && collider.OverlapPoint(mousePosition))
             {
-                SceneManager.LoadScene(sceneToLoad);
+                StartCoroutine(DontDestoryGameObject.Instance.ShowPanel(sceneToLoad));
+
+                //SceneManager.LoadScene(sceneToLoad);
             }
         }
     }
