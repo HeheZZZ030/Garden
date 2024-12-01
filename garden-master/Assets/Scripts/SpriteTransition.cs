@@ -45,6 +45,10 @@ public class SpriteTransition : MonoBehaviour
     private float mappedValue = 0f; // Ó³ÉäµÄÖµ£¨0-1£©
 
     private LevelState levelState;
+
+    public GameObject successPhoto;
+    public AudioSource successAudio;
+    public AudioClip audiClip;
     void Start()
     {
         levelState = LevelState.Ready;
@@ -150,7 +154,8 @@ public class SpriteTransition : MonoBehaviour
             if(dissolveAmount >= 0.95)
             {
                 levelState = LevelState.Success;
-                StartCoroutine(WaitForEnd());
+                successAudio.PlayOneShot(audiClip);
+                //StartCoroutine(WaitForEnd());
             }
         }
         
@@ -158,6 +163,11 @@ public class SpriteTransition : MonoBehaviour
         {
             GameManager.Instance.GetLevel1Down();
             bgMaterial.SetFloat("_DissolveAmount", 1);
+            successPhoto.SetActive(true);
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                StartCoroutine(GameManager.Instance.LoadSceneWithFader("REAL"));
+            }
         }
 
         if (levelState == LevelState.End)

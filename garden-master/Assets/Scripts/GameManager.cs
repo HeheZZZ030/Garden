@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get { return _instance; } }
     private static GameManager _instance;
 
+    public SpriterendererFade spriterendererFader;
+
     public bool isLevel1Achieved;
 
     private void Awake()
@@ -35,6 +37,13 @@ public class GameManager : MonoBehaviour
     public void LoadScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
+    }
+
+    public IEnumerator LoadSceneWithFader(string sceneName)
+    {
+        StartCoroutine(spriterendererFader.FadeInAndOut());
+        yield return new WaitForSeconds(spriterendererFader.fadeDuration + spriterendererFader.displayDuration);
+        LoadScene(sceneName);
     }
 
     public void GetLevel1Down()

@@ -46,7 +46,7 @@ public class DontDestoryGameObject : MonoBehaviour
             yield return null;
         }
         yield return new WaitUntil(() => timer > 1);
-        SceneManager.LoadScene(sceneName);
+        GameManager.Instance.LoadScene(sceneName);
     }
 
     public IEnumerator HidePanel()
