@@ -7,11 +7,13 @@ public class PLAYERCONTROLLER : MonoBehaviour
     public float runSpeed;
     private Rigidbody2D myRigidbody;
     private Animator myAnim;
+    private AudioSource audioSource;
     // Start is called before the first frame update
     void Start()
     {
         myRigidbody = GetComponent<Rigidbody2D>();
         myAnim = GetComponent<Animator>();
+        audioSource = this.transform.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -45,5 +47,15 @@ public class PLAYERCONTROLLER : MonoBehaviour
         myRigidbody.velocity = playerVel;
         bool plyerHasXAxisSpeed = Mathf.Abs(myRigidbody.velocity.x) > Mathf.Epsilon;
         myAnim.SetBool("Walk", plyerHasXAxisSpeed);
+
+        if (plyerHasXAxisSpeed && !audioSource.isPlaying)
+        {
+            audioSource.Play();
+        }
+        else if(!plyerHasXAxisSpeed && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+
     }
 }
