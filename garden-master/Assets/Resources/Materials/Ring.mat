@@ -32,7 +32,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 770f8ca8ffc68074fa4326c45a6de2e2, type: 3}
+        m_Texture: {fileID: 2800000, guid: b3bf3078e1495394dafcf8c66b2a710c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskTex:
@@ -44,12 +44,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SecondTex:
-        m_Texture: {fileID: 2800000, guid: b3bf3078e1495394dafcf8c66b2a710c, type: 3}
+        m_Texture: {fileID: 2800000, guid: 770f8ca8ffc68074fa4326c45a6de2e2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Blend: 1
+    - _Blend: 0.76325965
     - _DissolveAmount: 0
     - _EnableExternalAlpha: 0
     m_Colors:
